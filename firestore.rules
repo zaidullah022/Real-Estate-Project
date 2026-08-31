@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Properties collection
+    match /properties/{propertyId} {
+      allow read: if true; // Public can browse listings
+      allow create: if true; // Allow adding properties (either authenticated or guest demo)
+      allow update, delete: if true; // Allow managing listings
+    }
+    
+    // Bookings collection
+    match /bookings/{bookingId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if true;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+  }
+}

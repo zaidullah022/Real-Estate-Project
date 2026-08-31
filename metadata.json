@@ -1,0 +1,6 @@
+{
+  "name": "Homevia - Luxury Real Estate & Property Discovery",
+  "description": "Explore premium houses, apartments, and plots. Schedule private viewings, list properties for sale, and manage real estate bookings with modern ease.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

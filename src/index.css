@@ -1,0 +1,252 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-charcoal-deep: #0c0d10;
+    --color-charcoal-base: #111317;
+    --color-charcoal-surface: #171920;
+    --color-charcoal-card: #1c1f28;
+    --color-champagne-light: #f5ebd9;
+    --color-champagne-gold: #c8a97e;
+    --color-champagne-hover: #dfc5a4;
+    --color-champagne-dark: #8c734b;
+  }
+
+  body {
+    background-color: #0c0d10;
+    color: #f5ebd9;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Custom Champagne Gold Scrollbar */
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0c0d10;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #282a32;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #c8a97e;
+  }
+
+  /* Luxury Selection */
+  ::selection {
+    background: rgba(200, 169, 126, 0.35);
+    color: #ffffff;
+  }
+}
+
+/* Custom Champagne & Luxury Utility Accents */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #f5ebd9 0%, #d4b996 50%, #a88d65 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #d4b996 0%, #c8a97e 50%, #8c734b 100%);
+}
+
+.gold-border-glow {
+  box-shadow: 0 0 25px -5px rgba(200, 169, 126, 0.15);
+}
+
+.charcoal-glass {
+  background: rgba(22, 25, 33, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.charcoal-glass-gold {
+  background: rgba(20, 23, 30, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(200, 169, 126, 0.22);
+}
+
+/* =========================================================
+   ELEGANCE IVORY THEME (Light Luxury Mode)
+   ========================================================= */
+body.theme-ivory,
+[data-theme="ivory"] {
+  background-color: #f7f4ee !important;
+  color: #1e1b18 !important;
+}
+
+body.theme-ivory ::-webkit-scrollbar-track,
+[data-theme="ivory"] ::-webkit-scrollbar-track {
+  background: #f0eae1;
+}
+
+body.theme-ivory ::-webkit-scrollbar-thumb,
+[data-theme="ivory"] ::-webkit-scrollbar-thumb {
+  background: #cfc5b4;
+}
+
+body.theme-ivory ::-webkit-scrollbar-thumb:hover,
+[data-theme="ivory"] ::-webkit-scrollbar-thumb:hover {
+  background: #b58c54;
+}
+
+/* Background mappings */
+.theme-ivory .bg-\[\#0c0d10\],
+.theme-ivory .bg-\[\#08090b\] {
+  background-color: #f7f4ee !important;
+}
+
+.theme-ivory .bg-\[\#111317\],
+.theme-ivory .bg-\[\#12141b\],
+.theme-ivory .bg-\[\#12141a\] {
+  background-color: #ffffff !important;
+}
+
+.theme-ivory .bg-\[\#171920\],
+.theme-ivory .bg-\[\#16181f\],
+.theme-ivory .bg-\[\#1a1d26\] {
+  background-color: #f2eee6 !important;
+}
+
+.theme-ivory .bg-\[\#1c1f28\],
+.theme-ivory .bg-\[\#20232c\],
+.theme-ivory .bg-\[\#2a2d38\] {
+  background-color: #e9e3d8 !important;
+}
+
+/* Semi-transparent overlays in ivory mode */
+.theme-ivory .bg-\[\#0c0d10\]\/80,
+.theme-ivory .bg-\[\#0c0d10\]\/90,
+.theme-ivory .bg-\[\#0c0d10\]\/85,
+.theme-ivory .bg-\[\#0c0d10\]\/70 {
+  background-color: rgba(247, 244, 238, 0.88) !important;
+}
+
+.theme-ivory .bg-\[\#0c0d10\]\/60,
+.theme-ivory .bg-\[\#0c0d10\]\/50,
+.theme-ivory .bg-\[\#0c0d10\]\/40,
+.theme-ivory .bg-\[\#0c0d10\]\/30 {
+  background-color: rgba(238, 232, 222, 0.6) !important;
+}
+
+.theme-ivory .bg-\[\#12141b\]\/95,
+.theme-ivory .bg-\[\#12141a\]\/95 {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+}
+
+.theme-ivory .bg-\[\#08090b\]\/85,
+.theme-ivory .bg-\[\#08090b\]\/90 {
+  background-color: rgba(28, 24, 20, 0.5) !important;
+}
+
+/* Glassmorphism in ivory mode */
+.theme-ivory .charcoal-glass {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(181, 140, 84, 0.2) !important;
+  box-shadow: 0 10px 30px -10px rgba(80, 60, 30, 0.08) !important;
+}
+
+.theme-ivory .charcoal-glass-gold {
+  background: rgba(255, 253, 249, 0.95) !important;
+  border-color: rgba(181, 140, 84, 0.35) !important;
+  box-shadow: 0 12px 36px -10px rgba(181, 140, 84, 0.12) !important;
+}
+
+/* Typography in ivory mode */
+.theme-ivory .text-white {
+  color: #1c1815 !important;
+}
+
+.theme-ivory .text-stone-100,
+.theme-ivory .text-stone-200 {
+  color: #2e2823 !important;
+}
+
+.theme-ivory .text-stone-300 {
+  color: #4a433c !important;
+}
+
+.theme-ivory .text-stone-400 {
+  color: #6e6459 !important;
+}
+
+.theme-ivory .text-stone-500 {
+  color: #8c8275 !important;
+}
+
+.theme-ivory .text-\[\#dfc5a4\],
+.theme-ivory .text-\[\#f5ebd9\] {
+  color: #966f36 !important;
+}
+
+.theme-ivory .text-\[\#c8a97e\] {
+  color: #8c6732 !important;
+}
+
+.theme-ivory .gold-gradient-text {
+  background: linear-gradient(135deg, #1c1815 0%, #8c6732 50%, #b58c54 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Borders in ivory mode */
+.theme-ivory .border-white\/\[0\.08\],
+.theme-ivory .border-white\/10,
+.theme-ivory .border-white\/15,
+.theme-ivory .border-white\/20,
+.theme-ivory .border-white\/30 {
+  border-color: rgba(70, 50, 30, 0.12) !important;
+}
+
+.theme-ivory .border-white\/5 {
+  border-color: rgba(70, 50, 30, 0.06) !important;
+}
+
+.theme-ivory .border-\[\#c8a97e\]\/30,
+.theme-ivory .border-\[\#c8a97e\]\/40,
+.theme-ivory .border-\[\#c8a97e\]\/60,
+.theme-ivory .border-\[\#dfc5a4\]\/80 {
+  border-color: rgba(181, 140, 84, 0.35) !important;
+}
+
+/* Buttons and accents in ivory mode */
+.theme-ivory .bg-white\/10 {
+  background-color: rgba(70, 50, 30, 0.07) !important;
+}
+
+.theme-ivory .bg-white\/10:hover,
+.theme-ivory .hover\:bg-white\/20:hover {
+  background-color: rgba(70, 50, 30, 0.12) !important;
+}
+
+.theme-ivory .bg-white\/5,
+.theme-ivory .bg-white\/\[0\.06\] {
+  background-color: rgba(70, 50, 30, 0.04) !important;
+}
+
+.theme-ivory .shadow-black\/90,
+.theme-ivory .shadow-black\/80,
+.theme-ivory .shadow-black\/40 {
+  box-shadow: 0 20px 40px -15px rgba(70, 50, 20, 0.14) !important;
+}
+
+.theme-ivory input,
+.theme-ivory select,
+.theme-ivory textarea {
+  color: #1c1815 !important;
+}
+
+.theme-ivory input::placeholder,
+.theme-ivory textarea::placeholder {
+  color: #8c8275 !important;
+}
