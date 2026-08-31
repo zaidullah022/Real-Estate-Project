@@ -121,7 +121,19 @@ export const subscribeToProperties = (callback: (properties: Property[]) => void
 
     const properties: Property[] = [];
     snapshot.forEach((docSnapshot) => {
-      properties.push({ id: docSnapshot.id, ...docSnapshot.data() } as Property);
+      const storedProperty = { id: docSnapshot.id, ...docSnapshot.data() } as Property;
+      // Keep the bundled showcase listings pinned to their current, real-world
+      // locations even when Firestore contains an older seeded copy.
+      const canonicalListing = INITIAL_PROPERTIES.find((item) => item.id === storedProperty.id);
+      properties.push(canonicalListing ? {
+        ...storedProperty,
+        location: canonicalListing.location,
+        address: canonicalListing.address,
+        city: canonicalListing.city,
+        state: canonicalListing.state,
+        lat: canonicalListing.lat,
+        lng: canonicalListing.lng,
+      } : storedProperty);
     });
     
     // If for some reason empty after seeding, fallback gracefully to initial

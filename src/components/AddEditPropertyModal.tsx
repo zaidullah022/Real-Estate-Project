@@ -23,6 +23,7 @@ import { Property, PropertyCategory, TourRoom, TourRoomCategory, UserProfile } f
 import { PRESET_PROPERTY_IMAGES } from '../data/initialProperties';
 import { ROOM_CATEGORY_OPTIONS, CATEGORY_FALLBACK_IMAGES } from '../utils/tourGenerator';
 import { addPropertyListing, updatePropertyListing } from '../lib/firebase';
+import { geocodeAddress, normalizeCoordinates } from '../utils/geocoding';
 
 interface AddEditPropertyModalProps {
   propertyToEdit: Property | null;
@@ -254,6 +255,16 @@ export const AddEditPropertyModal: React.FC<AddEditPropertyModalProps> = ({
 
       const allImages = roomImages.map((r) => r.image);
 
+      // Convert the listing's real address to map coordinates. When an edit cannot
+      // be resolved, retain its existing valid coordinates instead of losing its pin.
+      const addressQuery = [address.trim(), location.trim()].filter(Boolean).join(', ');
+      let coordinates = normalizeCoordinates(propertyToEdit || {});
+      try {
+        coordinates = (await geocodeAddress(addressQuery)) || coordinates;
+      } catch (error) {
+        console.warn('Address could not be geocoded; preserving existing coordinates.', error);
+      }
+
       const propertyPayload = {
         title: title.trim(),
         category: category,
@@ -261,6 +272,7 @@ export const AddEditPropertyModal: React.FC<AddEditPropertyModalProps> = ({
         location: location.trim(),
         address: address.trim(),
         city: location.split(',')[0]?.trim() || location,
+        ...(coordinates ? coordinates : {}),
         bedrooms: category === 'Plot' ? 0 : Number(bedrooms),
         bathrooms: category === 'Plot' ? 0 : Number(bathrooms),
         areaSqFt: Number(areaSqFt),

@@ -46,8 +46,9 @@ export interface Property {
   address: string;
   city: string;
   state?: string;
-  lat?: number;
-  lng?: number;
+  // Older Firestore documents may contain coordinates serialized as text.
+  lat?: number | string;
+  lng?: number | string;
   bedrooms: number;
   bathrooms: number;
   areaSqFt: number;

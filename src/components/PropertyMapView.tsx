@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import { 
   MapPin, 
@@ -21,6 +21,7 @@ import {
   Footprints
 } from 'lucide-react';
 import { Property, PropertyCategory, UserProfile } from '../types';
+import { geocodeAddress, normalizeCoordinates, Coordinates } from '../utils/geocoding';
 
 interface PropertyMapViewProps {
   properties: Property[];
@@ -50,21 +51,53 @@ export const PropertyMapView: React.FC<PropertyMapViewProps> = ({
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
 
   const [selectedPropertyOnMap, setSelectedPropertyOnMap] = useState<Property | null>(null);
-  const [mapTheme, setMapTheme] = useState<'dark' | 'voyager' | 'osm'>('dark');
+  const [mapTheme, setMapTheme] = useState<'street' | 'satellite'>('street');
+  const [resolvedCoordinates, setResolvedCoordinates] = useState<Record<string, Coordinates>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    const missing = properties.filter((property) => !normalizeCoordinates(property));
+    if (missing.length === 0) return;
+
+    const resolveLegacyListings = async () => {
+      const updates: Record<string, Coordinates> = {};
+      // Resolve sequentially to be courteous to the free geocoding service.
+      for (const property of missing) {
+        if (cancelled) return;
+        try {
+          const result = await geocodeAddress(property.address || property.location);
+          if (result) updates[property.id] = result;
+        } catch (error) {
+          console.warn(`Unable to locate ${property.title}`, error);
+        }
+      }
+      if (!cancelled && Object.keys(updates).length) {
+        setResolvedCoordinates((current) => ({ ...current, ...updates }));
+      }
+    };
+    void resolveLegacyListings();
+    return () => { cancelled = true; };
+  }, [properties]);
 
   // Filter properties with valid lat/lng and matching category
-  const validProperties = properties.filter((p) => {
-    const hasCoordinates = typeof p.lat === 'number' && typeof p.lng === 'number';
-    if (!hasCoordinates) return false;
-    if (selectedCategory === 'All') return true;
-    return p.category === selectedCategory;
-  });
+  const validProperties = useMemo(() => properties.flatMap((p) => {
+    const coordinates = normalizeCoordinates(p) || resolvedCoordinates[p.id];
+    if (!coordinates || (selectedCategory !== 'All' && p.category !== selectedCategory)) return [];
+    return [{ ...p, ...coordinates }];
+  }), [properties, resolvedCoordinates, selectedCategory]);
 
   // Tile layers
   const tileLayers = {
-    dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    voyager: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    osm: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    street: {
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19,
+    },
+    satellite: {
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      attribution: 'Tiles &copy; Esri and contributors',
+      maxZoom: 19,
+    },
   };
 
   // Initialize Leaflet Map
@@ -85,15 +118,15 @@ export const PropertyMapView: React.FC<PropertyMapViewProps> = ({
       center: defaultCenter,
       zoom: defaultZoom,
       zoomControl: false,
-      attributionControl: false,
+      attributionControl: true,
     });
 
-    const tileUrl = tileLayers[mapTheme];
-    const subdomains = mapTheme === 'osm' ? ['a', 'b', 'c'] : ['a', 'b', 'c', 'd'];
+    map.attributionControl.setPrefix(false);
+    const layer = tileLayers[mapTheme];
 
-    L.tileLayer(tileUrl, {
-      maxZoom: 19,
-      subdomains,
+    L.tileLayer(layer.url, {
+      maxZoom: layer.maxZoom,
+      attribution: layer.attribution,
     }).addTo(map);
 
     const markersGroup = L.layerGroup().addTo(map);
@@ -173,7 +206,7 @@ export const PropertyMapView: React.FC<PropertyMapViewProps> = ({
     if (validProperties.length > 0) {
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
     }
-  }, [validProperties, selectedPropertyOnMap]);
+  }, [validProperties, selectedPropertyOnMap, mapTheme]);
 
   const handleZoomIn = () => {
     mapInstanceRef.current?.zoomIn();
@@ -192,20 +225,20 @@ export const PropertyMapView: React.FC<PropertyMapViewProps> = ({
   };
 
   return (
-    <div className="relative w-full h-[680px] rounded-[32px] overflow-hidden border border-white/15 shadow-2xl bg-[#0c0d10] flex flex-col">
+    <div className="relative w-full h-[72svh] min-h-[520px] sm:h-[680px] rounded-[24px] sm:rounded-[32px] overflow-hidden border border-white/15 shadow-2xl bg-[#0c0d10] flex flex-col">
       
       {/* Map Header Floating Overlay Controls */}
-      <div className="absolute top-5 left-5 right-5 z-20 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
+      <div className="absolute top-3 left-3 right-3 sm:top-5 sm:left-5 sm:right-5 z-20 flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-2 sm:gap-3 pointer-events-none">
         
         {/* Category Filters Pill */}
-        <div className="pointer-events-auto flex items-center gap-1.5 p-1.5 bg-[#0c0d10]/90 backdrop-blur-xl border border-white/15 rounded-full shadow-2xl">
+        <div className="pointer-events-auto flex items-center justify-between gap-0.5 p-1 bg-[#0c0d10]/90 backdrop-blur-xl border border-white/15 rounded-full shadow-2xl overflow-x-auto max-w-full">
           {(['All', 'House', 'Apartment', 'Plot'] as const).map((cat) => {
             const isActive = selectedCategory === cat;
             return (
               <button
                 key={cat}
                 onClick={() => onSelectCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                className={`min-h-10 px-3 sm:px-4 py-2 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
                     ? 'bg-gradient-to-r from-[#dfc5a4] to-[#c8a97e] text-[#0c0d10] shadow-md shadow-[#c8a97e]/20'
                     : 'text-stone-400 hover:text-white hover:bg-white/[0.05]'
@@ -218,24 +251,24 @@ export const PropertyMapView: React.FC<PropertyMapViewProps> = ({
         </div>
 
         {/* Map Style & View Control Buttons */}
-        <div className="pointer-events-auto flex items-center gap-2.5">
+        <div className="pointer-events-auto flex items-center justify-between sm:justify-end gap-2.5">
           {/* Map Style Switcher */}
           <div className="flex items-center bg-[#0c0d10]/90 backdrop-blur-xl border border-white/15 rounded-full p-1 shadow-2xl text-xs">
             <button
-              onClick={() => setMapTheme('dark')}
-              className={`px-3.5 py-1.5 rounded-full font-medium transition-all cursor-pointer ${
-                mapTheme === 'dark' ? 'bg-white/20 text-white' : 'text-stone-400 hover:text-white'
+              onClick={() => setMapTheme('street')}
+              className={`min-h-9 px-3.5 py-1.5 rounded-full font-medium transition-all cursor-pointer ${
+                mapTheme === 'street' ? 'bg-white/20 text-white' : 'text-stone-400 hover:text-white'
               }`}
             >
-              Dark Luxury
+              Street
             </button>
             <button
-              onClick={() => setMapTheme('voyager')}
-              className={`px-3.5 py-1.5 rounded-full font-medium transition-all cursor-pointer ${
-                mapTheme === 'voyager' ? 'bg-white/20 text-white' : 'text-stone-400 hover:text-white'
+              onClick={() => setMapTheme('satellite')}
+              className={`min-h-9 px-3.5 py-1.5 rounded-full font-medium transition-all cursor-pointer ${
+                mapTheme === 'satellite' ? 'bg-white/20 text-white' : 'text-stone-400 hover:text-white'
               }`}
             >
-              Light Street
+              Satellite
             </button>
           </div>
 
@@ -243,21 +276,21 @@ export const PropertyMapView: React.FC<PropertyMapViewProps> = ({
           <div className="flex items-center gap-1 bg-[#0c0d10]/90 backdrop-blur-xl border border-white/15 rounded-full p-1 shadow-2xl">
             <button
               onClick={handleZoomIn}
-              className="p-2 rounded-full text-stone-300 hover:text-white hover:bg-white/10 cursor-pointer"
+              className="p-2.5 rounded-full text-stone-300 hover:text-white hover:bg-white/10 cursor-pointer"
               title="Zoom In"
             >
               <ZoomIn className="w-4 h-4" />
             </button>
             <button
               onClick={handleZoomOut}
-              className="p-2 rounded-full text-stone-300 hover:text-white hover:bg-white/10 cursor-pointer"
+              className="p-2.5 rounded-full text-stone-300 hover:text-white hover:bg-white/10 cursor-pointer"
               title="Zoom Out"
             >
               <ZoomOut className="w-4 h-4" />
             </button>
             <button
               onClick={handleResetView}
-              className="p-2 rounded-full text-stone-300 hover:text-white hover:bg-white/10 cursor-pointer"
+              className="p-2.5 rounded-full text-stone-300 hover:text-white hover:bg-white/10 cursor-pointer"
               title="Fit to All Properties"
             >
               <RotateCcw className="w-4 h-4" />
@@ -272,7 +305,7 @@ export const PropertyMapView: React.FC<PropertyMapViewProps> = ({
       {/* Selected Property Floating Bottom Preview Card */}
       {selectedPropertyOnMap && (
         <div className="absolute bottom-6 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md z-30 animate-in slide-in-from-bottom-4 duration-200">
-          <div className="bg-[#12141a]/95 backdrop-blur-2xl border border-[#c8a97e]/30 rounded-3xl p-5 shadow-2xl shadow-black/90 flex flex-col gap-4 relative">
+          <div className="bg-[#12141a]/95 backdrop-blur-2xl border border-[#c8a97e]/30 rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/90 flex flex-col gap-4 relative">
             
             {/* Close Selected Pin Card */}
             <button
@@ -318,7 +351,7 @@ export const PropertyMapView: React.FC<PropertyMapViewProps> = ({
             </div>
 
             {/* Quick Specs & Actions */}
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
+            <div className={`grid ${onStartVirtualTour ? 'grid-cols-3' : 'grid-cols-2'} gap-2 pt-2 border-t border-white/10`}>
               <button
                 onClick={() => onSelectProperty(selectedPropertyOnMap)}
                 className="py-2.5 px-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white flex items-center justify-center gap-1 transition-all cursor-pointer"

@@ -17,7 +17,13 @@
     color: #f5ebd9;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     letter-spacing: -0.01em;
+    min-width: 320px;
+    overflow-x: hidden;
   }
+
+  button, a, input, select, textarea { touch-action: manipulation; }
+
+  img, video, svg { max-width: 100%; }
 
   h1, h2, h3, h4, .font-serif {
     font-family: 'Playfair Display', Georgia, serif;
@@ -45,6 +51,22 @@
     background: rgba(200, 169, 126, 0.35);
     color: #ffffff;
   }
+}
+
+.leaflet-control-attribution {
+  max-width: calc(100vw - 1.5rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 9px !important;
+  background: rgba(12, 13, 16, 0.82) !important;
+  color: #d6d3d1 !important;
+}
+
+.leaflet-control-attribution a { color: #dfc5a4 !important; }
+
+@media (max-width: 430px) {
+  .leaflet-bottom.leaflet-right { right: 0.25rem; bottom: 0.25rem; }
 }
 
 /* Custom Champagne & Luxury Utility Accents */

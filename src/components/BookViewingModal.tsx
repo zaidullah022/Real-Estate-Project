@@ -10,7 +10,8 @@ import {
   UserCheck, 
   Sparkles, 
   Building, 
-  ArrowRight, 
+  ArrowRight,
+  ArrowLeft,
   Phone, 
   Mail, 
   User 
@@ -111,23 +112,26 @@ export const BookViewingModal: React.FC<BookViewingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#08090b]/85 backdrop-blur-2xl flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-[#12141b]/95 backdrop-blur-2xl border border-[#c8a97e]/30 rounded-[32px] overflow-hidden shadow-2xl shadow-black/90 my-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[#08090b]/85 backdrop-blur-2xl flex items-start sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-200">
+      <div className="relative w-full min-h-[100svh] sm:min-h-0 sm:max-h-[92vh] sm:max-w-2xl bg-[#12141b]/95 backdrop-blur-2xl border-0 sm:border border-[#c8a97e]/30 rounded-none sm:rounded-[32px] overflow-y-auto shadow-2xl shadow-black/90 sm:my-6 pb-[env(safe-area-inset-bottom)]">
         
         {/* Header */}
-        <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between bg-[#0c0d10]/70 backdrop-blur-xl">
-          <div className="flex items-center gap-3">
+        <div className="sticky top-0 z-30 px-4 sm:px-6 py-4 sm:py-5 border-b border-white/10 flex items-center justify-between bg-[#0c0d10]/95 backdrop-blur-xl pt-[max(1rem,env(safe-area-inset-top))]">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <button onClick={onClose} className="sm:hidden min-h-11 min-w-11 -ml-2 rounded-full text-stone-200 hover:bg-white/10 flex items-center justify-center" aria-label="Back">
+              <ArrowLeft className="w-5 h-5" />
+            </button>
             <div className="w-9 h-9 rounded-xl bg-[#1a1d26] border border-[#c8a97e]/30 flex items-center justify-center text-[#dfc5a4] shadow-md">
               <Calendar className="w-4 h-4" />
             </div>
-            <div>
-              <h3 className="font-serif text-lg font-bold text-white">Book a Private Viewing</h3>
-              <p className="text-[11px] text-stone-400 font-light">Schedule an exclusive walkthrough with a Homevia specialist</p>
+            <div className="min-w-0">
+              <h3 className="font-serif text-base sm:text-lg font-bold text-white truncate">Book a Private Viewing</h3>
+              <p className="hidden min-[380px]:block text-[11px] text-stone-400 font-light truncate">Schedule an exclusive walkthrough with a Homevia specialist</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            className="hidden sm:flex p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -182,7 +186,7 @@ export const BookViewingModal: React.FC<BookViewingModalProps> = ({
           </div>
         ) : (
           /* Main Booking Form */
-          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-5 sm:space-y-6">
             
             {/* Property Selector */}
             <div className="space-y-2">
@@ -190,7 +194,7 @@ export const BookViewingModal: React.FC<BookViewingModalProps> = ({
                 Select Property for Viewing
               </label>
               {selectedProperty ? (
-                <div className="flex items-center gap-3.5 p-3.5 bg-[#0c0d10]/60 backdrop-blur-md border border-white/10 rounded-2xl">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 p-3 sm:p-3.5 bg-[#0c0d10]/60 backdrop-blur-md border border-white/10 rounded-2xl">
                   <img
                     src={selectedProperty.images[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=200&q=80'}
                     alt={selectedProperty.title}
@@ -208,7 +212,7 @@ export const BookViewingModal: React.FC<BookViewingModalProps> = ({
                         const found = allProperties.find(p => p.id === e.target.value);
                         if (found) setSelectedProperty(found);
                       }}
-                      className="text-xs bg-[#171920] border border-white/15 text-stone-200 p-2.5 rounded-xl focus:outline-none focus:border-[#c8a97e]"
+                      className="w-full sm:w-auto min-h-11 text-xs bg-[#171920] border border-white/15 text-stone-200 p-2.5 rounded-xl focus:outline-none focus:border-[#c8a97e]"
                     >
                       {allProperties.map(p => (
                         <option key={p.id} value={p.id}>{p.title}</option>
@@ -226,7 +230,7 @@ export const BookViewingModal: React.FC<BookViewingModalProps> = ({
               <label className="block text-xs font-medium text-stone-400 uppercase tracking-wider">
                 Tour Experience
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setTourType('In-Person Walkthrough')}
@@ -287,7 +291,7 @@ export const BookViewingModal: React.FC<BookViewingModalProps> = ({
               <label className="block text-xs font-medium text-stone-400 uppercase tracking-wider">
                 Select Time Slot
               </label>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              <div className="grid grid-cols-2 min-[380px]:grid-cols-3 sm:grid-cols-6 gap-2">
                 {timeSlots.map((slot) => {
                   const isSelected = selectedTimeSlot === slot;
                   return (
@@ -368,18 +372,18 @@ export const BookViewingModal: React.FC<BookViewingModalProps> = ({
             </div>
 
             {/* Submit CTA */}
-            <div className="flex items-center justify-end gap-3.5 pt-4 border-t border-white/10">
+            <div className="flex flex-col-reverse min-[380px]:flex-row items-stretch min-[380px]:items-center justify-end gap-2.5 sm:gap-3.5 pt-4 border-t border-white/10">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 rounded-full text-xs font-semibold text-stone-400 hover:text-white bg-transparent cursor-pointer"
+                className="min-h-11 px-5 py-2.5 rounded-full text-xs font-semibold text-stone-400 hover:text-white bg-transparent cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || !selectedProperty}
-                className="px-7 py-3 rounded-full text-xs font-bold text-[#0c0d10] bg-gradient-to-r from-[#dfc5a4] to-[#c8a97e] hover:brightness-110 transition-all flex items-center gap-2 shadow-lg shadow-[#c8a97e]/20 disabled:opacity-50 cursor-pointer"
+                className="min-h-12 px-5 sm:px-7 py-3 rounded-full text-xs font-bold text-[#0c0d10] bg-gradient-to-r from-[#dfc5a4] to-[#c8a97e] hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#c8a97e]/20 disabled:opacity-50 cursor-pointer"
               >
                 {isSubmitting ? (
                   <span>Securing Date...</span>

@@ -22,8 +22,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     {
       id: 'aurora-modern-residence',
       title: 'Aurora Modern Residence',
-      address: '1234 Maple Avenue, Greenfield',
-      location: 'Greenfield, CA',
+      address: 'Point Dume, Malibu, CA 90265',
+      location: 'Point Dume, Malibu, CA',
       price: 3850000,
       category: 'House',
       images: [
@@ -35,8 +35,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     {
       id: 'lumina-horizon-penthouse',
       title: 'Lumina Sky Penthouse',
-      address: '88 Marina Boulevard, Penthouse 42',
-      location: 'San Francisco, CA',
+      address: 'Marina Boulevard, San Francisco, CA 94123',
+      location: 'Marina District, San Francisco, CA',
       price: 2450000,
       category: 'Apartment',
       images: [
@@ -47,7 +47,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     {
       id: 'solarium-ridge-plot',
       title: 'Solarium Vista Highland Plot',
-      address: '40 Acres Prime Ridge, Sun Valley',
+      address: 'Sun Valley Road, Sun Valley, ID 83353',
       location: 'Sun Valley, ID',
       price: 1250000,
       category: 'Plot',
@@ -62,14 +62,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const activeProperty = heroList[selectedHeroIndex] || heroList[0];
 
   return (
-    <section id="home" className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8">
+    <section id="home" className="relative w-full max-w-7xl mx-auto px-3 min-[380px]:px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 pb-8">
       
       {/* Outer Floating Frame - Deep Charcoal Glass Architecture Container */}
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full min-h-[640px] sm:min-h-[700px] lg:min-h-[740px] rounded-[36px] sm:rounded-[44px] overflow-hidden border border-[#c8a97e]/30 shadow-2xl shadow-black/80 flex flex-col justify-between p-6 sm:p-12 bg-[#0e1015] group"
+        className="relative w-full min-h-[calc(100svh-6.5rem)] sm:min-h-[700px] lg:min-h-[660px] xl:min-h-[700px] rounded-[26px] sm:rounded-[44px] overflow-hidden border border-[#c8a97e]/30 shadow-2xl shadow-black/80 flex flex-col justify-between p-4 min-[380px]:p-5 sm:p-12 lg:p-10 xl:p-12 bg-[#0e1015] group"
       >
         
         {/* Full-bleed Architectural Image with Crossfade */}
@@ -96,32 +96,50 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.15 }}
-          className="absolute top-12 sm:top-16 left-0 right-0 z-10 flex justify-center pointer-events-none select-none overflow-hidden"
+          className="absolute top-10 sm:top-16 lg:top-8 left-0 right-0 z-10 flex justify-center pointer-events-none select-none overflow-hidden"
         >
-          <h1 className="font-serif text-[18vw] sm:text-[16vw] leading-none font-bold text-white/[0.18] sm:text-white/[0.22] tracking-tight uppercase transition-all">
+          <p aria-hidden="true" className="font-serif text-[18vw] sm:text-[16vw] lg:text-[13.5vw] leading-none font-bold text-white/[0.18] sm:text-white/[0.22] lg:text-white/[0.13] tracking-tight uppercase transition-all">
             Homevia
-          </h1>
+          </p>
         </motion.div>
 
         {/* Top Space Reservation for Integrated Navigation */}
-        <div className="relative z-20 w-full h-12" />
+        <div className="relative z-20 w-full h-16 sm:h-12" />
 
         {/* Bottom Stage: Split layout with Left Subtitle + Avatars, and Right Floating Residence Cards */}
-        <div className="relative z-20 w-full mt-auto flex flex-col lg:flex-row items-end justify-between gap-10 pt-12">
+        <div className="relative z-20 w-full mt-auto flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-5 sm:gap-10 pt-8 sm:pt-12">
           
           {/* Bottom Left: Paragraph & Social Proof */}
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, delay: 0.25 }}
-            className="w-full lg:max-w-md space-y-6"
+            className="w-full lg:max-w-[720px] space-y-4 sm:space-y-6"
           >
-            <p className="text-sm sm:text-base text-stone-200 font-light leading-relaxed drop-shadow-md">
+            <div className="space-y-3">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#c8a97e]/40 bg-black/35 px-3 py-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.16em] text-[#f0d8b8] backdrop-blur-md">
+                <Sparkles className="h-3.5 w-3.5" /> Curated places. Remarkable lives.
+              </span>
+              <h1 className="max-w-xl lg:max-w-[720px] font-serif text-[clamp(2.15rem,11vw,4.6rem)] lg:text-[3.35rem] xl:text-[3.75rem] font-bold leading-[0.98] tracking-[-0.045em] text-white drop-shadow-2xl">
+                <span className="lg:whitespace-nowrap">Find a home that feels</span>{' '}
+                <span className="text-[#e5c8a3] lg:block lg:mt-1">uniquely yours.</span>
+              </h1>
+            </div>
+            <p className="max-w-md text-[13px] sm:text-base text-stone-200 font-light leading-relaxed drop-shadow-md">
               Discover signature homes and prestigious land parcels designed with enduring architectural elegance. Homevia connects you with spaces that elevate modern living.
             </p>
 
+            <div className="flex flex-col min-[380px]:flex-row gap-2.5 sm:gap-3">
+              <button onClick={onBrowseAll} className="min-h-11 rounded-full bg-gradient-to-r from-[#dfc5a4] to-[#c8a97e] px-5 text-xs font-bold text-[#0c0d10] shadow-lg shadow-black/30 transition hover:brightness-110">
+                Explore properties
+              </button>
+              <button onClick={() => onBookViewing(activeProperty)} className="min-h-11 rounded-full border border-white/25 bg-black/35 px-5 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-black/55">
+                Book a private visit
+              </button>
+            </div>
+
             {/* Overlapping User Avatars + 1.2M+ Trusted Clients */}
-            <div className="flex items-center gap-3.5 pt-1">
+            <div className="hidden sm:flex items-center gap-3.5 pt-1">
               <div className="flex -space-x-2.5 overflow-hidden">
                 <img
                   className="inline-block h-10 w-10 rounded-full ring-2 ring-[#c8a97e]/60 object-cover shadow-md"
@@ -155,18 +173,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, delay: 0.25 }}
-            className="w-full sm:w-[340px] lg:w-[360px] flex flex-col items-end gap-3.5 shrink-0"
+            className="w-full sm:w-[340px] lg:w-[360px] flex flex-col items-stretch sm:items-end gap-2.5 sm:gap-3.5 shrink-0"
           >
             
             {/* Top Miniature Thumbnails Gallery */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-end gap-2">
               {heroList.slice(0, 3).map((item, idx) => (
                 <motion.button
                   key={item.id}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedHeroIndex(idx)}
-                  className={`relative w-20 h-14 sm:w-24 sm:h-16 rounded-2xl overflow-hidden border-2 transition-all duration-300 shadow-lg group/thumb cursor-pointer ${
+                  className={`relative flex-1 sm:flex-none h-12 min-w-0 sm:w-24 sm:h-16 rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all duration-300 shadow-lg group/thumb cursor-pointer ${
                     selectedHeroIndex === idx
                       ? 'border-[#dfc5a4] scale-105 ring-2 ring-[#c8a97e]/40 shadow-xl'
                       : 'border-white/20 opacity-70 hover:opacity-100 hover:border-white/50'
@@ -188,11 +206,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Main Floating Clean Warm / Frosted Residence Card */}
             <motion.div
               layout
-              className="w-full bg-[#14171f]/95 backdrop-blur-2xl rounded-[28px] p-6 shadow-2xl shadow-black/80 border border-[#c8a97e]/30 text-white space-y-4"
+              className="w-full bg-[#14171f]/95 backdrop-blur-2xl rounded-[22px] sm:rounded-[28px] p-4 sm:p-6 shadow-2xl shadow-black/80 border border-[#c8a97e]/30 text-white space-y-3 sm:space-y-4"
             >
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-serif text-lg font-bold text-white tracking-tight truncate">
+                  <h3 className="min-w-0 font-serif text-base sm:text-lg font-bold text-white tracking-tight truncate">
                     {activeProperty.title}
                   </h3>
                   <span className="text-xs font-serif font-bold text-[#dfc5a4]">
@@ -250,7 +268,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="w-full mt-6 px-3 flex flex-wrap items-center justify-between gap-4 text-xs text-stone-400"
+        className="w-full mt-5 sm:mt-6 px-1 sm:px-3 flex flex-col min-[380px]:flex-row items-start min-[380px]:items-center justify-between gap-3 sm:gap-4 text-xs text-stone-400"
       >
         <div className="flex items-center gap-8">
           <span className="flex items-center gap-2 text-stone-300 font-medium">
